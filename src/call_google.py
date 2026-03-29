@@ -48,19 +48,18 @@ async def call_gemini(
         )
     except errors.ClientError as e:
         if e.code == 401:
-            msg = f"[Google] API 키가 없거나 유효하지 않습니다. GOOGLE_API_KEY를 확인해주세요. ({e})"
+            logger.error(f"[Google] [{save_path}] API 키가 없거나 유효하지 않습니다. GOOGLE_API_KEY를 확인해주세요. ({e})")
         elif e.code == 429:
-            msg = f"[Google] 요청 한도 초과 또는 크레딧이 부족합니다. ({e})"
+            logger.error(f"[Google] [{save_path}] 요청 한도 초과 또는 크레딧이 부족합니다. ({e})")
         else:
-            msg = f"[Google] 요청 오류가 발생했습니다. (HTTP {e.code}: {e})"
-        logger.error(msg)
-        print(msg)
-        return
+            logger.error(f"[Google] [{save_path}] 요청 오류가 발생했습니다. (HTTP {e.code}: {e})")
+        return False
     except errors.ServerError as e:
-        msg = f"[Google] 서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요. ({e})"
-        logger.error(msg)
-        print(msg)
-        return
+        logger.error(f"[Google] [{save_path}] 서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요. ({e})")
+        return False
+    except Exception as e:
+        logger.error(f"[Google] [{save_path}] 예상치 못한 오류가 발생했습니다. ({type(e).__name__}: {e})")
+        return False
 
     results = {
         "model": model,
@@ -69,3 +68,4 @@ async def call_gemini(
     }
     with open(save_path, "w", encoding="utf-8") as f:
         json.dump(results, f, ensure_ascii=False, indent=4)
+    return True

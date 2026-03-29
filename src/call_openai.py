@@ -55,21 +55,19 @@ async def call_gpt(
             ],
         )
     except AuthenticationError as e:
-        msg = f"[OpenAI] API 키가 없거나 유효하지 않습니다. OPENAI_API_KEY를 확인해주세요. ({e})"
-        logger.error(msg)
-        print(msg)
-        return
+        logger.error(f"[OpenAI] [{save_path}] API 키가 없거나 유효하지 않습니다. OPENAI_API_KEY를 확인해주세요. ({e})")
+        return False
     except PermissionDeniedError as e:
-        msg = f"[OpenAI] 접근 권한이 없습니다. 크레딧 또는 API 키 권한을 확인해주세요. ({e})"
-        logger.error(msg)
-        print(msg)
-        return
+        logger.error(f"[OpenAI] [{save_path}] 접근 권한이 없습니다. 크레딧 또는 API 키 권한을 확인해주세요. ({e})")
+        return False
     except RateLimitError as e:
-        msg = f"[OpenAI] 요청 한도 초과 또는 크레딧이 부족합니다. ({e})"
-        logger.error(msg)
-        print(msg)
-        return
+        logger.error(f"[OpenAI] [{save_path}] 요청 한도 초과 또는 크레딧이 부족합니다. ({e})")
+        return False
+    except Exception as e:
+        logger.error(f"[OpenAI] [{save_path}] 예상치 못한 오류가 발생했습니다. ({type(e).__name__}: {e})")
+        return False
 
     results = response.model_dump()
     with open(save_path, "w", encoding="utf-8") as f:
         json.dump(results, f, ensure_ascii=False, indent=4)
+    return True

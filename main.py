@@ -4,6 +4,7 @@ import pandas as pd
 import yaml
 from tqdm import tqdm
 import asyncio
+import time
 
 from src import add_tasks
 from src.validator import validate_csv
@@ -12,6 +13,8 @@ from src.logger import setup_logger
 
 async def run(df, output_path, images_mapping, model_default_kwargs, BATCH_SIZE, logger):
     tasks = []
+    results = []
+
     if len(df) <= BATCH_SIZE:
         unit_tasks = add_tasks(df=df, output_path=output_path, images_mapping=images_mapping, kwargs=model_default_kwargs)
         tasks.extend(unit_tasks)
@@ -22,13 +25,25 @@ async def run(df, output_path, images_mapping, model_default_kwargs, BATCH_SIZE,
             tasks.extend(unit_tasks)
 
             if len(tasks) >= BATCH_SIZE:
-                await asyncio.gather(*tasks)
+                batch_results = await asyncio.gather(*tasks)
+                results.extend(batch_results)
                 tasks = []
 
     if tasks:
-        await asyncio.gather(*tasks)
+        batch_results = await asyncio.gather(*tasks)
+        results.extend(batch_results)
 
-    logger.info("모든 요청이 완료되었습니다.")
+    total = len(results)
+    success = sum(1 for r in results if r is True)
+    fail = sum(1 for r in results if r is False)
+
+
+    logger.info("================================================")
+    logger.info("\n\n[summary]")
+    logger.info(f"전체 요청: {total}")
+    logger.info(f"요청 성공: {success}")
+    logger.info(f"요청 실패: {fail}")
+    logger.info("================================================")
 
 
 if __name__ == "__main__":
@@ -53,12 +68,14 @@ if __name__ == "__main__":
 
     input_path = config["path"]["input"]
     system_prompt_path = config["path"]["system_prompt"]
-    file_path = config["path"]["file_path"]
     output_path = config["path"]["output"]
+    file_path = config["settings"]["image_file"]["base_root"]
     BATCH_SIZE = config["settings"]["request"]["batch_size"]
     target_suffixes = config["settings"]["image_file"]["suffix"]
 
     logger = setup_logger()
+    logger.info(f"================================================")
+    logger.info("시작 시간: " + time.strftime("%Y년 %m월 %d일 %H시 %M분 %S초"))
     logger.info(f"설정 파일: {Path(args.config).absolute()}")
     logger.info(f"입력 CSV: {Path(input_path).absolute()}")
     logger.info(f"시스템 프롬프트: {Path(system_prompt_path).absolute()}")

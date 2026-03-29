@@ -50,21 +50,19 @@ async def call_claude(
             messages=[{"role": "user", "content": content}],
         )
     except AuthenticationError as e:
-        msg = f"[Anthropic] API 키가 없거나 유효하지 않습니다. ANTHROPIC_API_KEY를 확인해주세요. ({e})"
-        logger.error(msg)
-        print(msg)
-        return
+        logger.error(f"[Anthropic] [{save_path}] API 키가 없거나 유효하지 않습니다. ANTHROPIC_API_KEY를 확인해주세요. ({e})")
+        return False
     except PermissionDeniedError as e:
-        msg = f"[Anthropic] 접근 권한이 없습니다. 크레딧 또는 결제 정보를 확인해주세요. ({e})"
-        logger.error(msg)
-        print(msg)
-        return
+        logger.error(f"[Anthropic] [{save_path}] 접근 권한이 없습니다. 크레딧 또는 결제 정보를 확인해주세요. ({e})")
+        return False
     except RateLimitError as e:
-        msg = f"[Anthropic] 요청 한도 초과 또는 크레딧이 부족합니다. ({e})"
-        logger.error(msg)
-        print(msg)
-        return
+        logger.error(f"[Anthropic] [{save_path}] 요청 한도 초과 또는 크레딧이 부족합니다. ({e})")
+        return False
+    except Exception as e:
+        logger.error(f"[Anthropic] [{save_path}] 예상치 못한 오류가 발생했습니다. ({type(e).__name__}: {e})")
+        return False
 
     results = message.model_dump()
     with open(save_path, "w", encoding="utf-8") as f:
         json.dump(results, f, ensure_ascii=False, indent=4)
+    return True

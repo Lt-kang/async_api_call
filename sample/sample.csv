@@ -2,5 +2,5 @@ model,save_path,image_path,user_prompt
 gpt-5.1,001.json,,api test1
 gpt-5.1,./test/002.json,,api test2
 gpt-5.1,./test/dpt2/003.json,lotus.jpg,이 사진이 무엇인지 설명해줘
-gemini-2.5-flash-lite,./test/dpt2/003.json,lotus.jpg,이 사진이 무엇인지 설명해줘
-claude-sonnet-4-5,./test/dpt2/003.json,lotus.jpg,이 사진이 무엇인지 설명해줘
+gemini-2.5-flash-lite,./test/dpt2/004.json,lotus.jpg,이 사진이 무엇인지 설명해줘
+claude-sonnet-4-5,./test/dpt2/005.json,lotus.jpg,이 사진이 무엇인지 설명해줘

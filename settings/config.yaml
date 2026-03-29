@@ -1,7 +1,6 @@
 path:
   input: ./sample/sample.csv
   system_prompt: ./sample/sample_system_prompt.txt
-  file_path: ./sample/sample_image
   output: ./output
 
 
@@ -12,5 +11,6 @@ settings:
     delay: 60 # seconds
 
   image_file:
+    base_root: ./sample/sample_image
     suffix: [".png", ".jpg", ".jpeg", ".webp"]
 
