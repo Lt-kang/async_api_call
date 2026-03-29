@@ -30,8 +30,6 @@ Thumbs.db
 # Jupyter notebooks checkpoints
 .ipynb_checkpoints/
 
-# dotenv files
-.env.*
 # virtual environments
 .venv/
 venv/
