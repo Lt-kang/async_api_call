@@ -1,0 +1,39 @@
+.env
+
+.claude/
+logs/
+output/
+
+**/__pycache__/
+
+
+# VSCode settings
+.vscode/
+.idea/
+*.code-workspace
+
+# Python artifacts
+*.pyc
+*.pyo
+*.pyd
+*.pdb
+*.egg-info/
+dist/
+build/
+.eggs/
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Jupyter notebooks checkpoints
+.ipynb_checkpoints/
+
+# dotenv files
+.env.*
+# virtual environments
+.venv/
+venv/
+ENV/
+env/
